@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-php-web
+  labels:
+    name: {{ .Release.Name }}-php-web
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      run: {{ .Release.Name }}-php-web
+      app: {{ .Release.Name }}-php-web
+  template:
+    metadata:
+      labels:
+        run: {{ .Release.Name }}-php-web
+        app: {{ .Release.Name }}-php-web
+    spec:
+      containers:
+      
+      - name: php-web
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          limits:
+            {{- toYaml .Values.resources.limits | nindent 12 }}
+          requests:
+            {{- toYaml .Values.resources.requests | nindent 12 }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+        - name: config-volume1
+          mountPath: /etc/nginx/sites-available/default
+          subPath: example.conf
+        - name: config-volume3
+          mountPath: /etc/nginx/sites-enabled/default
+          subPath: example.conf
+        - name: config-volume2
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ .Values.configMaps.nginxConfig }}
+      - name: config-volume1
+        configMap:
+          name: {{ .Values.configMaps.nginxConfig1 }}
+      - name: config-volume2
+        configMap:
+          name: {{ .Values.configMaps.nginxConfig2 }}
+      - name: config-volume3
+        configMap:
+          name: {{ .Values.configMaps.nginxConfig3 }}

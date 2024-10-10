@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mongodb
+  labels:
+    app: {{ .Release.Name }}-mongodb
+spec:
+  replicas: {{ .Values.mongodb.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-mongodb
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: "{{ .Values.mongodb.image }}"
+        resources:
+          limits:
+            {{  toYaml .Values.mongodb.resources.limits | nindent 8 }} 
+          requests:
+            {{ toYaml .Values.mongodb.resources.requests | nindent 8 }} 
+        # resources:
+          # limits:
+          #   {{- toYaml .Values.mongodb.resources.limits | default (dict) | nindent 1 }}
+          # requests:
+          #   {{- toYaml .Values.mongodb.resources.requests | default (dict) | nindent 1 }} 
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        volumeMounts:
+        - name: mongodb-data
+          mountPath: /data/db
+      volumes:
+        - name: mongodb-data
+          persistentVolumeClaim:   
+            claimName: {{ .Release.Name }}-mongodb-pvc                                    
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: {{ .Release.Name }}-mongodb
+#   labels:
+#     app: {{ .Release.Name }}-mongodb
+# spec:
+#   replicas: {{ .Values.replicaCount }}
+#   selector:
+#     matchLabels:
+#       app: {{ .Release.Name }}-mongodb
+#   template:
+#     metadata:
+#       labels:
+#         app: {{ .Release.Name }}-mongodb
+#     spec:
+#       containers:
+#       - name: mongodb
+#         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+#         resources:
+#           limits:
+#             {{- toYaml .Values.resources.limits | nindent 12 }}
+#           requests:
+#             {{- toYaml.Values.resources.requests | nindent 12 }}
+#         ports:
+#         - containerPort: {{ .Values.service.port }}
+#         volumeMounts:
+#         - name: mongodb-data
+#           mountPath: /data/db
+#       volumes:
+#         - name: mongodb-data
+#           persistentVolumeClaim:
+#             claimName: {{ .Release.Name }}-mongodb-pvc
+
+
+
+
+
+

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config1
+data:
+  example.conf: |
+    server {
+        listen 80;
+        listen [::]:80;
+
+        server_name {{ .Values.nginx.serverName }};
+
+        root {{ .Values.nginx.root }};
+        index {{ .Values.nginx.indexFiles | join " " }};
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+    }

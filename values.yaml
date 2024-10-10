@@ -1,0 +1,116 @@
+replicaCount: 1
+
+mongodb:
+  image: mongo:latest
+  replicas: 1
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "2"
+    requests:
+      memory: "512Mi"
+      cpu: "1"
+
+
+# mongodb:
+#   replicas: 1
+#   image: "mongo:latest"
+#   resources:
+#     limits:
+#       cpu: "500m"
+#       memory: "512Mi"
+#     requests:
+#       cpu: "250m"
+#       memory: "256Mi"
+
+
+
+
+
+php:
+  image: prjctnew-web:latest
+  replicas: 1
+  resources:
+    limits:
+      memory: 1G
+      cpu: "2"
+    requests:
+      memory: 512Mi
+      cpu: "0.5"
+
+# nginx:
+#   configMaps:
+#     nginxConfig: |
+#       user www-data;
+#       worker_processes auto;
+#       ...
+      
+#     exampleConfig: |
+#       server {
+#           listen 80;
+#           ...
+#       }
+
+
+
+
+
+image:
+  repository: prjctnew-web
+  tag: latest
+  pullPolicy: Never
+
+# resources:
+#   limits:
+#     memory: 1Gi
+#     cpu: "2"
+#   requests:
+#     memory: 512Mi
+#     cpu: "0.5"
+#   # limits:
+#   #   cpu: "100m"
+#   #   memory: "256Mi"
+#   # requests:
+#   #   cpu: "100m"
+#   #   memory: "256Mi"
+
+resources:
+  limits:
+    mongodb:
+      memory: 512Mi
+      cpu: "1"
+    php:
+      memory: 1G
+      cpu: "2"
+  requests:
+    mongodb:
+      memory: 256Mi
+      cpu: "0.2"
+    php:
+      memory: 512Mi
+      cpu: "0.5"
+
+
+service:
+  enabled: true
+  type: NodePort
+  port: 80
+  targetPort: 80
+  nodePort: 30003
+
+configMaps:
+  nginxConfig: nginx-config
+  nginxConfig1: nginx-config1
+  nginxConfig2: nginx-config2
+  nginxConfig3: nginx-config3
+
+
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce  
+  size: 1Gi         
+  storageClass: standard  
+
+
+
